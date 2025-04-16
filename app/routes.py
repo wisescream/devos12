@@ -10,10 +10,6 @@ def index():
 
 @bp.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
-# Add this to your existing routes.py
-@bp.route('/dashboard')
-def dashboard():
     user_count = User.query.count()
     return render_template('dashboard.html', user_count=user_count)
 
