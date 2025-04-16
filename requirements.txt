@@ -1,0 +1,9 @@
+# Flask Todo App - DevOps Project
+
+## Description
+Une petite application Flask avec ajout et suppression de tâches, utilisée pour un projet DevOps.
+
+## Installation
+```bash
+pip install -r requirements.txt
+python app.py
