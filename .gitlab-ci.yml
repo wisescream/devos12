@@ -49,17 +49,9 @@ build:
     - docker push $DOCKER_IMAGE:$DOCKER_TAG
 
 
-deploy:
+deploy_app:
   stage: deploy
-  image: docker:20.10
-  variables:
-    DOCKER_HOST: "tcp://192.168.11.158:2375"  # Your Kali VM's IP
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_USER_ROLE == "maintainer"'  # Only Maintainers can deploy
   script:
-    # Pull and run the container
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-    - docker pull "$DOCKER_IMAGE:$DOCKER_TAG"
-    - docker stop flask-app || true
-    - docker rm flask-app || true
-    - docker run -d --name flask-app -p 5000:5000 "$DOCKER_IMAGE:$DOCKER_TAG"
-  only:
-    - main
+    - bash deploy.sh
