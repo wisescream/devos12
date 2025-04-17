@@ -4,8 +4,6 @@ FROM python:3.9-slim as builder
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV FLASK_APP=app.py
-ENV FLASK_ENV=production
 
 # Install system dependencies
 RUN apt-get update && \
@@ -37,11 +35,11 @@ WORKDIR /app
 # Copy application code
 COPY . .
 
-# Install Gunicorn explicitly (even if in requirements.txt)
+# Install Gunicorn explicitly
 RUN pip install --no-cache-dir gunicorn==20.1.0
 
 # Expose port
 EXPOSE 5000
 
-# Run Gunicorn (adjust 'app:app' if your Flask instance has different name)
-CMD ["gunicorn", "--bind", "0.0.0:5000", "--workers", "4", "app:app"]
+# Run Gunicorn with application factory
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "run:app"]

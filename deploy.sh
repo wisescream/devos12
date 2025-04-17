@@ -13,4 +13,3 @@ docker pull "$CI_REGISTRY_IMAGE:dashboard"
 
 # Re-run containers
 docker run -d --name flask-app -p 5000:5000 "$CI_REGISTRY_IMAGE:flask"
-docker run -d --name dashboard-app -p 8050:8050 "$CI_REGISTRY_IMAGE:dashboard"
