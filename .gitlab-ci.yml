@@ -51,21 +51,15 @@ build:
 
 deploy:
   stage: deploy
-  image: alpine:3.14
-  before_script:
-    - apk add --no-cache openssh-client
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  image: docker:20.10
+  variables:
+    DOCKER_HOST: "tcp://192.168.11.158:2375"  # Your Kali VM's IP
   script:
-    - echo "Deploying $DOCKER_IMAGE:$DOCKER_TAG"
-    - ssh $SSH_USER@$SERVER_IP "
-        docker login -u '$CI_REGISTRY_USER' -p '$CI_REGISTRY_PASSWORD' '$CI_REGISTRY' &&
-        docker pull '$DOCKER_IMAGE:$DOCKER_TAG' &&
-        docker stop flask-app || true &&
-        docker rm flask-app || true &&
-        docker run -d --name flask-app -p 5000:5000 '$DOCKER_IMAGE:$DOCKER_TAG'
-      "
+    # Pull and run the container
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker pull "$DOCKER_IMAGE:$DOCKER_TAG"
+    - docker stop flask-app || true
+    - docker rm flask-app || true
+    - docker run -d --name flask-app -p 5000:5000 "$DOCKER_IMAGE:$DOCKER_TAG"
   only:
     - main
